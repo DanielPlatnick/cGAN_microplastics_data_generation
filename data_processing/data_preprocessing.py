@@ -7,6 +7,7 @@ from scipy import *
 from pylab import *
 import random
 from scipy.ndimage import map_coordinates, gaussian_filter
+import json
 
 # all spectra data is in the form of a 2d array
 raw_data_dir = os.getcwd() + '\\data_processing\\raw_data\\'
@@ -80,28 +81,43 @@ def elastic_transform_3d_color(image, alpha, sigma, random_state=None):
 
     return distorted_image
 
-# Load the image
+# # Load the image
 testing_image_path = polar_data_dir + '\\Polyethylene (PE)\\Polyethylene (PE)_147.png' 
 testing_image = cv2.imread(testing_image_path)
 testing_image = cv2.cvtColor(testing_image, cv2.COLOR_BGR2RGB)
 
-# Apply elastic transformation with alpha (distortion factor) and sigma (smoothness)
-#started a=50 s=5  --> a-(0,60)
-distorted_image = elastic_transform_3d_color(testing_image, alpha=30, sigma=5)
+# # Apply elastic transformation with alpha (distortion factor) and sigma (smoothness)
+#started a=50 s=5  --> a-(15,60) s->(2.5,4)
+testing_image = elastic_transform_3d_color(testing_image, alpha=60, sigma=4)
 
-# Display the original and distorted 3D color images
-plt.subplot(1, 2, 1)
-plt.imshow(testing_image)
-plt.title('Original 3D Image')
-plt.axis('on')
+# plt.imshow(testing_image)
+# plt.title('Image')
+# plt.axis('on')
+# plt.show()
+# import Image
+testing_image_pil = Image.fromarray(testing_image)
 
-plt.subplot(1, 2, 2)
-plt.imshow(distorted_image)
-plt.title('Distorted 3D Image (Elastic Transformation)')
-plt.axis('on')
+# Resize the image
+new_size = (1167, 876)
+new_im = Image.new("RGB", new_size)   ## luckily, this is already black!
+box = ((new_size[0] - testing_image_pil.width) // 2, (new_size[1] - testing_image_pil.height) // 2)
+new_im.paste(testing_image_pil, box)
 
+plt.imshow(new_im)
 plt.show()
+# new_im.save('someimage.jpg')
 
+
+
+# # Load the image
+# testing_image_path = polar_data_dir + '\\Polyethylene (PE)\\Polyethylene (PE)_147.png' 
+# testing_image = cv2.imread(testing_image_path)
+# testing_image = cv2.cvtColor(testing_image, cv2.COLOR_BGR2RGB)
+
+# # Add a white border to the image
+# image_with_border = add_border(testing_image, border_thickness=20)
+
+# # Show the images
 # testing_image_path = polar_data_dir + '\\Polyethylene (PE)\\Polyethylene (PE)_147.png' 
 # testing_image = np.array(cv2.imread(testing_image_path))
 # testing_image = cv2.cvtColor(testing_image, cv2.COLOR_BGR2RGB)
